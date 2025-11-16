@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src https://unitrack-support-662697300051.us-central1.run.app; frame-ancestors 'none';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <title>UniTrack Support</title>
     <style>
         * {
@@ -259,10 +263,12 @@
                 return;
             }
             
-            // Check honeypot field
+            // Check honeypot field (bot detection)
             const honeypot = form.querySelector('input[name="website"]').value;
             if (honeypot) {
-                // Bot detected, silently fail
+                // Bot detected, silently fail (don't reveal honeypot)
+                showMessage('Thank you! Your message has been sent.', false);
+                form.reset();
                 return;
             }
             
@@ -318,7 +324,7 @@
                     showMessage(data.error || 'Failed to send message. Please try again later.', true);
                 }
             } catch (error) {
-                console.error('Error:', error);
+                // Don't log sensitive error details to console
                 showMessage('Network error. Please check your connection and try again.', true);
             } finally {
                 submitBtn.disabled = false;
